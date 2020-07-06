@@ -1,4 +1,4 @@
-package com.springboot.myshop.domain.user;
+package com.springboot.myshop.domain.customer;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-public class User {
+public class Customer {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "USER_ID")
+    @Column(name = "CUSTOMER_ID")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -36,8 +36,8 @@ public class User {
     private LocalDateTime modifiedDatetime;
 
     @Builder
-    public User(String email, String password,
-                Address address, RoleType roleType, LocalDateTime createdDatetime, LocalDateTime modifiedDatetime) {
+    public Customer(String email, String password,
+                    Address address, RoleType roleType, LocalDateTime createdDatetime, LocalDateTime modifiedDatetime) {
         this.email = email;
         this.password = password;
         this.address = address;

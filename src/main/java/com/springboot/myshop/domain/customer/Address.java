@@ -1,4 +1,4 @@
-package com.springboot.myshop.domain.user;
+package com.springboot.myshop.domain.customer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
