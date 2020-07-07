@@ -3,13 +3,18 @@ package com.springboot.myshop.domain.customer;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
+@Getter @ToString
 @NoArgsConstructor
 @Entity
+@EntityListeners(value = AuditingEntityListener.class)
 public class Customer {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -25,24 +30,22 @@ public class Customer {
     @Embedded
     private Address address;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RoleType roleType;
-
-    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdDatetime;
 
-    @Column(nullable = false)
+    @LastModifiedDate
     private LocalDateTime modifiedDatetime;
 
     @Builder
-    public Customer(String email, String password,
-                    Address address, RoleType roleType, LocalDateTime createdDatetime, LocalDateTime modifiedDatetime) {
+    public Customer(String email, String password, Address address) {
         this.email = email;
         this.password = password;
         this.address = address;
-        this.roleType = roleType;
-        this.createdDatetime = createdDatetime;
-        this.modifiedDatetime = modifiedDatetime;
+    }
+
+    public void update(String email, String password, Address address) {
+        this.email = email;
+        this.password = password;
+        this.address = address;
     }
 }
