@@ -1,5 +1,6 @@
 package com.springboot.myshop.domain.customer;
 
+import com.springboot.myshop.domain.customer.value.Address;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,8 +44,7 @@ public class Customer {
         this.address = address;
     }
 
-    public void update(String email, String password, Address address) {
-        this.email = email;
+    public void update(String password, Address address) {
         this.password = password;
         this.address = address;
     }

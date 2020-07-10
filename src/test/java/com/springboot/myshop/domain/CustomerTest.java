@@ -1,6 +1,6 @@
 package com.springboot.myshop.domain;
 
-import com.springboot.myshop.domain.customer.Address;
+import com.springboot.myshop.domain.customer.value.Address;
 import com.springboot.myshop.domain.customer.Customer;
 import com.springboot.myshop.domain.customer.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -46,11 +46,10 @@ public class CustomerTest {
         Customer savedCustomer = customerRepository.save(customer);
 
         //when
-        Customer findCustomer = customerRepository.findById(savedCustomer.getId()).get();
-        findCustomer.update("email1", "1234", new Address("address"));
-        Customer modified = customerRepository.save(findCustomer);
+        savedCustomer.update("modified", new Address("modified"));
+        Customer modifiedCustomer = customerRepository.save(savedCustomer);
 
-        assertThat(modified.getCreatedDatetime()).isBefore(modified.getModifiedDatetime());
+        assertThat(modifiedCustomer.getCreatedDatetime()).isBefore(modifiedCustomer.getModifiedDatetime());
     }
 
 
