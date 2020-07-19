@@ -32,6 +32,16 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+
+    testCompile "org.mockito:mockito-core:2.+"
+    // https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path
+    testImplementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
+    // https://mvnrepository.com/artifact/javax.validation/validation-api
+    implementation 'com.google.code.gson:gson:2.8.6'
+    // https://mvnrepository.com/artifact/javax.validation/validation-api
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+
 }
 
 test {
