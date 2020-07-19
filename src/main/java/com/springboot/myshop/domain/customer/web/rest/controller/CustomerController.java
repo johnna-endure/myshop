@@ -1,14 +1,18 @@
-package com.springboot.myshop.web.rest.controller.customer;
+package com.springboot.myshop.domain.customer.web.rest.controller;
 
-import com.springboot.myshop.domain.customer.dto.CustomerCreationDto;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.springboot.myshop.domain.customer.dto.CustomerCreateDto;
+import com.springboot.myshop.domain.customer.dto.CustomerDeleteResult;
 import com.springboot.myshop.domain.customer.dto.CustomerResponseDto;
 import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
-import com.springboot.myshop.web.rest.controller.customer.assembler.CustomerModelAssembler;
-import com.springboot.myshop.web.service.CustomerService;
+import com.springboot.myshop.domain.customer.dto.enums.DeleteResults;
+import com.springboot.myshop.domain.customer.web.rest.controller.assembler.CustomerModelAssembler;
+import com.springboot.myshop.domain.customer.web.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +31,6 @@ public class CustomerController {
     private final CustomerService customerService;
     private final CustomerModelAssembler assembler;
 
-    //페이징 필요함.
     @GetMapping
     public CollectionModel<EntityModel<CustomerResponseDto>> all(@RequestParam(required = false) Integer page,
                                                                  @RequestParam(required = false) Integer size) {
@@ -39,7 +42,8 @@ public class CustomerController {
                 .map(responseDto -> assembler.toModel(responseDto))
                 .collect(Collectors.toList());
         return CollectionModel.of(customers,
-                linkTo(methodOn(CustomerController.class).all(page, size)).withSelfRel());
+                linkTo(methodOn(CustomerController.class).all(page, size)).withSelfRel(),
+                linkTo(methodOn(CustomerController.class).create(null)).withRel("create"));
     }
 
     @GetMapping("/{id}")
@@ -48,9 +52,9 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<CustomerResponseDto>> create(@RequestBody CustomerCreationDto customerCreationDto){
+    public ResponseEntity<EntityModel<CustomerResponseDto>> create(@RequestBody CustomerCreateDto customerCreateDto){
         CustomerResponseDto responseDto =
-                CustomerResponseDto.of(customerService.create(customerCreationDto.toEntity()));
+                CustomerResponseDto.of(customerService.create(customerCreateDto.toEntity()));
 
         return ResponseEntity
                 .created(linkTo(methodOn(CustomerController.class).one(responseDto.getId())).toUri())
@@ -71,10 +75,12 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public CollectionModel<EntityModel<CustomerResponseDto>> deleteOne(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<CustomerDeleteResult>> deleteOne(@PathVariable Long id) {
         customerService.delete(id);
-
-        return all(0, 5);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(EntityModel.of(new CustomerDeleteResult(DeleteResults.SUCCESS),
+                        linkTo(methodOn(CustomerController.class).all(null, null)).withRel("all"),
+                        linkTo(methodOn(CustomerController.class).deleteOne(id)).withSelfRel()));
     }
 
 }

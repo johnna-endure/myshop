@@ -1,6 +1,6 @@
-package com.springboot.myshop.web.service;
+package com.springboot.myshop.domain.customer.web.service;
 
-import com.springboot.myshop.domain.customer.Customer;
+import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.repository.CustomerRepository;
@@ -10,10 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 /*
 구현할 기능

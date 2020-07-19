@@ -1,10 +1,9 @@
-package com.springboot.myshop.web.service;
+package com.springboot.myshop.domain.customer.web.service;
 
-import com.springboot.myshop.domain.customer.dto.CustomerResponseDto;
 import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.value.Address;
-import com.springboot.myshop.domain.customer.Customer;
+import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,17 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class CustomerServiceTest {
