@@ -29,7 +29,7 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public Page<Customer> findAll(int page, int size) {
-        return customerRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
+        return customerRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
     }
 
     @Transactional(readOnly = true)

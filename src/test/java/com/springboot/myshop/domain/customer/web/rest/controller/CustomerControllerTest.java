@@ -63,7 +63,7 @@ public class CustomerControllerTest {
 		assertThat(customers.size()).isEqualTo(3);
 		//email 필드를 통해 동등성 체크
 		List<String> customerEmails = JsonPath.read(content, "$..email");
-		assertThat(customerEmails).isEqualTo(Lists.list("email0","email1","email2"));
+		assertThat(customerEmails).isEqualTo(Lists.list("email2","email1","email0"));
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class CustomerControllerTest {
 		assertThat(firstPage.size()).isEqualTo(5);
 
 		List<String> firstPageEmails = JsonPath.read(firstPageContent, "$..email");
-		assertThat(firstPageEmails).isEqualTo(Lists.list("email0","email1","email2","email3","email4"));
+		assertThat(firstPageEmails).isEqualTo(Lists.list("email6","email5","email4","email3","email2"));
 
 		//when2 : 두번째 페이지
 		String secondPageContent = mockMvc.perform(
@@ -98,7 +98,7 @@ public class CustomerControllerTest {
 		assertThat(secondPage.size()).isEqualTo(2);
 
 		List<String> secondPageEmails = JsonPath.read(secondPageContent, "$..email");
-		assertThat(secondPageEmails).isEqualTo(Lists.list("email5","email6"));
+		assertThat(secondPageEmails).isEqualTo(Lists.list("email1","email0"));
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class CustomerControllerTest {
 		assertThat(firstPage.size()).isEqualTo(4);
 
 		List<String> firstPageEmails = JsonPath.read(firstPage, "$..email");
-		assertThat(firstPageEmails).isEqualTo(Lists.list("email0","email1","email2","email3"));
+		assertThat(firstPageEmails).isEqualTo(Lists.list("email6","email5","email4","email3"));
 
 		//when2 : 두번째 페이지
 		String secondPageContent = mockMvc.perform(
@@ -135,7 +135,7 @@ public class CustomerControllerTest {
 		assertThat(secondPage.size()).isEqualTo(3);
 
 		List<String> secondPageEmails = JsonPath.read(secondPageContent, "$..email");
-		assertThat(secondPageEmails).isEqualTo(Lists.list("email4","email5", "email6"));
+		assertThat(secondPageEmails).isEqualTo(Lists.list("email2","email1", "email0"));
 	}
 
 	@Test
