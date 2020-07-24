@@ -1,12 +1,10 @@
 package com.springboot.myshop.domain.customer.web.rest.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.springboot.myshop.domain.customer.dto.CustomerCreateDto;
-import com.springboot.myshop.domain.customer.dto.CustomerDeleteResult;
-import com.springboot.myshop.domain.customer.dto.CustomerResponseDto;
-import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
-import com.springboot.myshop.domain.customer.dto.enums.DeleteResults;
+import com.springboot.myshop.domain.customer.web.dto.CustomerCreateDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerDeleteResult;
+import com.springboot.myshop.domain.customer.web.dto.CustomerResponseDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.dto.enums.DeleteResults;
 import com.springboot.myshop.domain.customer.web.rest.controller.assembler.CustomerModelAssembler;
 import com.springboot.myshop.domain.customer.web.service.CustomerService;
 import lombok.RequiredArgsConstructor;

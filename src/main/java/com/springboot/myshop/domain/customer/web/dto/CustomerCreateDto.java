@@ -1,4 +1,4 @@
-package com.springboot.myshop.domain.customer.dto;
+package com.springboot.myshop.domain.customer.web.dto;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.value.Address;

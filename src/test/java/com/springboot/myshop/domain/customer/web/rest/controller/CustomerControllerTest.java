@@ -2,8 +2,8 @@ package com.springboot.myshop.domain.customer.web.rest.controller;
 
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
-import com.springboot.myshop.domain.customer.dto.CustomerCreateDto;
-import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerCreateDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.repository.CustomerRepository;
@@ -198,6 +198,7 @@ public class CustomerControllerTest {
 
 	@Test @Disabled
 	public void create_createDto_emailIsNull() throws Exception {
+
 	}
 
 	@Test @Disabled

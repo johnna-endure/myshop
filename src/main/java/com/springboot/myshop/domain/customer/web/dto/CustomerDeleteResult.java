@@ -1,8 +1,7 @@
-package com.springboot.myshop.domain.customer.dto;
+package com.springboot.myshop.domain.customer.web.dto;
 
-import com.springboot.myshop.domain.customer.dto.enums.DeleteResults;
+import com.springboot.myshop.domain.customer.web.dto.enums.DeleteResults;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.server.core.Relation;
 
 @Getter

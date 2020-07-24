@@ -1,6 +1,6 @@
 package com.springboot.myshop.domain.customer.web.service;
 
-import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.value.Address;
 import com.springboot.myshop.domain.customer.entity.Customer;

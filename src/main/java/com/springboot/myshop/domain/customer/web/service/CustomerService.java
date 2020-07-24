@@ -1,7 +1,7 @@
 package com.springboot.myshop.domain.customer.web.service;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;

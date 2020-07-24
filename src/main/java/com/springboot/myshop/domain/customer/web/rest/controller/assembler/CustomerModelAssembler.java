@@ -1,6 +1,6 @@
 package com.springboot.myshop.domain.customer.web.rest.controller.assembler;
 
-import com.springboot.myshop.domain.customer.dto.CustomerResponseDto;
+import com.springboot.myshop.domain.customer.web.dto.CustomerResponseDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.CustomerController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -15,7 +15,7 @@ public class CustomerModelAssembler
 
 	@Override
 	public EntityModel<CustomerResponseDto> toModel(CustomerResponseDto entity) {
-
+		
 		return EntityModel.of(entity,
 				linkTo(methodOn(CustomerController.class).all(null,null)).withRel("all"),
 				linkTo(methodOn(CustomerController.class).one(entity.getId())).withSelfRel(),
