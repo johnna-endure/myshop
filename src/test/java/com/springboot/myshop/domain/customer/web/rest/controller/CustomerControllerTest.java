@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CustomerControllerTest {
@@ -40,11 +42,6 @@ public class CustomerControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	private Gson gson = new Gson();
-
-	@AfterEach
-	public void afterEach() {
-		customerRepository.deleteAll();
-	}
 
 	@Test
 	public void all_파라미터_없고_사이즈보다_데이터_적은_경우() throws Exception {
@@ -272,26 +269,102 @@ public class CustomerControllerTest {
 		assertThat(findJsonElement(content, "$.violations.address")).isEqualTo("address is required");
 	}
 
-	@Test @Disabled
+	@Test
 	public void update_변경에_성공한_경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
-				new Customer("email", "1234", new Address("address")));
+				new Customer("email", "password", new Address("address")));
+		CustomerUpdateDto updateDto = new CustomerUpdateDto("password2", new Address("address2"));
 
 		//when
-		CustomerUpdateDto updateDto = new CustomerUpdateDto("5678", new Address("address1"));
 		mockMvc.perform(
 				put("/customers/" + saved.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(gson.toJson(updateDto)))
 				.andExpect(status().isCreated());
+
+		//then
+		Customer modified = customerRepository.findById(saved.getId()).get();
+		assertThat(modified.getPassword()).isEqualTo("password2");
+		assertThat(modified.getAddress().getAddress()).isEqualTo("address2");
 	}
 
-	@Test @Disabled
-	public void update_변경에_실패한_경우(){
-		
+	@Test
+	public void update_updateDto_password_null인경우() throws Exception {
+		//given
+		Customer saved = customerRepository.save(
+				new Customer("email", "password", new Address("address")));
+		CustomerUpdateDto updateDto = CustomerUpdateDto.builder()
+				.address(new Address("address2"))
+				.password(null)
+				.build();
+
+		//when
+		String content = mockMvc.perform(
+				put("/customers/" + saved.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(gson.toJson(updateDto)))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+
+		//then
+		assertThat(findJsonElement(content, "$.url")).isEqualTo("/customers/" + saved.getId());
+		assertThat(findJsonElement(content, "$.method")).isEqualTo("PUT");
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.password")).isEqualTo("password is required");
 	}
-	
+
+	@Test
+	public void update_updateDto_password_8자미만인경우() throws Exception {
+		//given
+		Customer saved = customerRepository.save(
+				new Customer("email", "password", new Address("address")));
+		CustomerUpdateDto updateDto = CustomerUpdateDto.builder()
+				.address(new Address("address2"))
+				.password("1234")
+				.build();
+
+		//when
+		String content = mockMvc.perform(
+				put("/customers/" + saved.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(gson.toJson(updateDto)))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+
+		//then
+		assertThat(findJsonElement(content, "$.url")).isEqualTo("/customers/" + saved.getId());
+		assertThat(findJsonElement(content, "$.method")).isEqualTo("PUT");
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.password"))
+				.isEqualTo("password is too short, at least 8");
+	}
+
+	@Test
+	public void update_updateDto_address_null인경우() throws Exception {
+		//given
+		Customer saved = customerRepository.save(
+				new Customer("email", "password", new Address("address")));
+		CustomerUpdateDto updateDto = CustomerUpdateDto.builder()
+				.address(null)
+				.password("password2")
+				.build();
+
+		//when
+		String content = mockMvc.perform(
+				put("/customers/" + saved.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(gson.toJson(updateDto)))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+
+		//then
+		assertThat(findJsonElement(content, "$.url")).isEqualTo("/customers/" + saved.getId());
+		assertThat(findJsonElement(content, "$.method")).isEqualTo("PUT");
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.address")).isEqualTo("address is required");
+	}
+
 	@Test
 	public void delete_삭제_성공한_경우() throws Exception {
 		//given
