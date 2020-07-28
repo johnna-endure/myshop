@@ -7,7 +7,6 @@ import com.springboot.myshop.domain.customer.exception.CustomerValidationExcepti
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.web.service.CustomerService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -152,8 +151,4 @@ public class CustomerValidationAspectTest {
 				.isExactlyInstanceOf(CustomerValidationException.class)
 				.hasMessage("bad request");
 	}
-
-
-
-
 }
