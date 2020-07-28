@@ -1,8 +1,6 @@
 package com.springboot.myshop;
 
-import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.repository.CustomerRepository;
-import com.springboot.myshop.domain.customer.value.Address;
+import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -25,7 +23,7 @@ public class MyshopApplication {
     @Bean
     CommandLineRunner initDatabase(CustomerRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new Customer("email11","1234", new Address("address1"))));
+//            log.info("Preloading " + repository.save(new Customer("email11","1234", new Address("address1"))));
 //            log.info("Preloading " + repository.save(new Customer("email21","5678", new Address("address2"))));
 //            log.info("Preloading " + repository.save(new Customer("email31","5678", new Address("address2"))));
 //            log.info("Preloading " + repository.save(new Customer("email41","5678", new Address("address2"))));

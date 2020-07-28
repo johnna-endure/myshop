@@ -1,19 +1,21 @@
-package com.springboot.myshop.domain.customer.web.dto;
+package com.springboot.myshop.domain.customer.web.rest.controller.dto;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.value.Address;
+import com.springboot.myshop.domain.customer.entity.value.Address;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 public class CustomerCreateDto {
-    @NotNull(message = "email is null")
+    @NotNull(message = "email is required")
     private String email;
-    @NotNull(message = "password is null")
+    @NotNull(message = "password is required")
+    @Length(min = 8, message = "password is too short, least 8")
     private String password;
-    @NotNull(message = "address is null")
+    @NotNull(message = "address is required")
     private Address address;
 
     @Builder

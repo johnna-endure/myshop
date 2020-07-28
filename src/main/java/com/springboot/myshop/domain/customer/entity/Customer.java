@@ -1,6 +1,6 @@
 package com.springboot.myshop.domain.customer.entity;
 
-import com.springboot.myshop.domain.customer.value.Address;
+import com.springboot.myshop.domain.customer.entity.value.Address;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +15,8 @@ import java.util.Objects;
 
 @Getter @ToString
 @NoArgsConstructor
-@Entity
 @EntityListeners(value = AuditingEntityListener.class)
+@Entity
 public class Customer {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)

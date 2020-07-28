@@ -1,7 +1,7 @@
-package com.springboot.myshop.web.error.assembler;
+package com.springboot.myshop.domain.customer.web.rest.controller.assembler;
 
 import com.springboot.myshop.domain.customer.web.rest.controller.CustomerController;
-import com.springboot.myshop.web.error.ErrorResponse;
+import com.springboot.myshop.domain.customer.web.rest.controller.response.ErrorResponse;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

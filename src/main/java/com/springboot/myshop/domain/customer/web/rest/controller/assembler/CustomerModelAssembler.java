@@ -1,6 +1,6 @@
 package com.springboot.myshop.domain.customer.web.rest.controller.assembler;
 
-import com.springboot.myshop.domain.customer.web.dto.CustomerResponseDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.response.FoundCustomerResponse;
 import com.springboot.myshop.domain.customer.web.rest.controller.CustomerController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -11,10 +11,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class CustomerModelAssembler
-		implements RepresentationModelAssembler<CustomerResponseDto, EntityModel<CustomerResponseDto>> {
+		implements RepresentationModelAssembler<FoundCustomerResponse, EntityModel<FoundCustomerResponse>> {
 
 	@Override
-	public EntityModel<CustomerResponseDto> toModel(CustomerResponseDto entity) {
+	public EntityModel<FoundCustomerResponse> toModel(FoundCustomerResponse entity) {
 		
 		return EntityModel.of(entity,
 				linkTo(methodOn(CustomerController.class).all(null,null)).withRel("all"),

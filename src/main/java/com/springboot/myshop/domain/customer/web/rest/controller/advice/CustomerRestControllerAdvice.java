@@ -1,9 +1,11 @@
 package com.springboot.myshop.domain.customer.web.rest.controller.advice;
 
+import com.springboot.myshop.domain.customer.exception.CustomerValidationException;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.web.rest.controller.CustomerController;
-import com.springboot.myshop.web.error.ErrorResponse;
-import com.springboot.myshop.web.error.assembler.ErrorResponseModelAssembler;
+import com.springboot.myshop.domain.customer.web.rest.controller.response.ErrorResponse;
+import com.springboot.myshop.domain.customer.web.rest.controller.assembler.ErrorResponseModelAssembler;
+import com.springboot.myshop.domain.customer.web.rest.controller.response.ValidationErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -26,5 +28,13 @@ public class CustomerRestControllerAdvice {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.header("Content-Type","application/json; charset=utf-8")
 				.body(assembler.toModel(ErrorResponse.makeErrorResponse(request, e)));
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<EntityModel<ErrorResponse>> dtoValidationExceptionHandler(
+			HttpServletRequest request, CustomerValidationException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.header("Content-Type","application/json; charset=utf-8")
+				.body(assembler.toModel(ValidationErrorResponse.makeErrorResponse(request, e)));
 	}
 }

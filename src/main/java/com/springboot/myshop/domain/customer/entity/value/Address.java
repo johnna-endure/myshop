@@ -1,4 +1,4 @@
-package com.springboot.myshop.domain.customer.value;
+package com.springboot.myshop.domain.customer.entity.value;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

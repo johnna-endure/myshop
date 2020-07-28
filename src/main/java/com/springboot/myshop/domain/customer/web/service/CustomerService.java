@@ -1,9 +1,10 @@
 package com.springboot.myshop.domain.customer.web.service;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
-import com.springboot.myshop.domain.customer.repository.CustomerRepository;
+import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,14 +39,14 @@ public class CustomerService {
                 .orElseThrow(() -> new NotFoundCustomerException(id));
     }
 
-    public Customer create(Customer customer) {
-        return customerRepository.save(customer);
+    public Customer create(CustomerCreateDto customerDto) {
+        return customerRepository.save(customerDto.toEntity());
     }
 
-    public Customer update(CustomerUpdateDto updateDto, Long id) {
+    public Customer update(CustomerUpdateDto customerDto, Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundCustomerException(id));
-        customer.update(updateDto.getPassword(),updateDto.getAddress());
+        customer.update(customerDto.getPassword(),customerDto.getAddress());
         return customerRepository.save(customer);
     }
 

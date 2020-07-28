@@ -2,12 +2,12 @@ package com.springboot.myshop.domain.customer.web.rest.controller;
 
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
-import com.springboot.myshop.domain.customer.web.dto.CustomerCreateDto;
-import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
-import com.springboot.myshop.domain.customer.repository.CustomerRepository;
-import com.springboot.myshop.domain.customer.value.Address;
+import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
+import com.springboot.myshop.domain.customer.entity.value.Address;
 import com.springboot.myshop.domain.customer.web.rest.controller.assembler.CustomerModelAssembler;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
@@ -196,51 +196,83 @@ public class CustomerControllerTest {
 		assertThat(findJsonElement(content, "$.modifiedDatetime")).isNotNull();
 	}
 
-	@Test @Disabled
-	public void create_createDto_emailIsNull() throws Exception {
+	@Test
+	public void create_createDto_email_null일때_예외응답() throws Exception {
+		CustomerCreateDto creationDto = CustomerCreateDto.builder()
+				.email(null)
+				.password("password")
+				.address(new Address("address"))
+				.build();
 
+		String content = mockMvc.perform(
+				post("/customers")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(gson.toJson(creationDto)))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.email")).isEqualTo("email is required");
 	}
 
-	@Test @Disabled
-	public void create_createDto_passwordIsNull() throws Exception {
-		CustomerCreateDto dto = CustomerCreateDto.builder()
+	@Test
+	public void create_createDto_password_null일때_예외응답() throws Exception {
+		CustomerCreateDto creationDto = CustomerCreateDto.builder()
 				.email("email")
 				.password(null)
 				.address(new Address("address"))
 				.build();
+
 		String content = mockMvc.perform(
 				post("/customers")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(gson.toJson(dto)))
+						.content(gson.toJson(creationDto)))
 				.andExpect(status().isBadRequest())
 				.andReturn().getResponse().getContentAsString();
 
-		assertThat(findJsonElement(content, "$.url")).isEqualTo("/customers");
-		assertThat(findJsonElement(content, "$.method")).isEqualToIgnoringCase("post");
-		assertThat(findJsonElement(content, "$.message")).isEqualTo("password 값이 없습니다.");
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.password")).isEqualTo("password is required");
 	}
-
-
-	@Test @Disabled
-	public void create_createDto_addressIsNull() throws Exception {
-		CustomerCreateDto dto = CustomerCreateDto.builder()
+	
+	@Test
+	public void create_createDto_password_8자미만일때_예외응답() throws Exception {
+		CustomerCreateDto creationDto = CustomerCreateDto.builder()
 				.email("email")
 				.password("1234")
-				.address(null)
+				.address(new Address("address"))
 				.build();
+
 		String content = mockMvc.perform(
 				post("/customers")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(gson.toJson(dto)))
+						.content(gson.toJson(creationDto)))
 				.andExpect(status().isBadRequest())
 				.andReturn().getResponse().getContentAsString();
 
-		assertThat(findJsonElement(content, "$.url")).isEqualTo("/customers");
-		assertThat(findJsonElement(content, "$.method")).isEqualToIgnoringCase("post");
-		assertThat(findJsonElement(content, "$.message")).isEqualTo("address 값이 없습니다.");
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.password")).isEqualTo("password is too short, least 8");
 	}
 
 	@Test
+	public void create_createDto_address_null일때_예외응답() throws Exception {
+		CustomerCreateDto creationDto = CustomerCreateDto.builder()
+				.email("email")
+				.password("password")
+				.address(null)
+				.build();
+
+		String content = mockMvc.perform(
+				post("/customers")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(gson.toJson(creationDto)))
+				.andExpect(status().isBadRequest())
+				.andReturn().getResponse().getContentAsString();
+
+		assertThat(findJsonElement(content, "$.message")).isEqualTo("bad request");
+		assertThat(findJsonElement(content, "$.violations.address")).isEqualTo("address is required");
+	}
+
+	@Test @Disabled
 	public void update_변경에_성공한_경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
@@ -253,7 +285,6 @@ public class CustomerControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(gson.toJson(updateDto)))
 				.andExpect(status().isCreated());
-
 	}
 
 	@Test @Disabled

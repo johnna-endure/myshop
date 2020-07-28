@@ -1,4 +1,4 @@
-package com.springboot.myshop.web.error;
+package com.springboot.myshop.domain.customer.web.rest.controller.response;
 
 import lombok.Builder;
 import lombok.Getter;

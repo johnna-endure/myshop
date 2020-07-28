@@ -1,8 +1,7 @@
 package com.springboot.myshop.domain.customer.entity;
 
-import com.springboot.myshop.domain.customer.value.Address;
-import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.repository.CustomerRepository;
+import com.springboot.myshop.domain.customer.entity.value.Address;
+import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

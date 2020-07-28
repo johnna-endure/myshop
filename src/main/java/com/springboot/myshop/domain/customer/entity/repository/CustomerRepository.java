@@ -1,4 +1,4 @@
-package com.springboot.myshop.domain.customer.repository;
+package com.springboot.myshop.domain.customer.entity.repository;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
 import org.springframework.data.domain.Page;

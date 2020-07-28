@@ -1,10 +1,11 @@
 package com.springboot.myshop.domain.customer.web.service;
 
-import com.springboot.myshop.domain.customer.web.dto.CustomerUpdateDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
-import com.springboot.myshop.domain.customer.value.Address;
+import com.springboot.myshop.domain.customer.entity.value.Address;
 import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.repository.CustomerRepository;
+import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,6 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 public class CustomerServiceTest {
-
 
     private CustomerService customerService;
     @Autowired
@@ -78,16 +78,16 @@ public class CustomerServiceTest {
     @Test
     public void create_가입에_성공한_경우(){
         //given
-        Customer customer = new Customer("email", "1234", new Address("address"));
+        CustomerCreateDto customerDto = new CustomerCreateDto("email", "1234", new Address("address"));
 
         //when
-        Customer savedCustomer = customerService.create(customer);
+        Customer savedCustomer = customerService.create(customerDto);
 
         //then
-        assertThat(savedCustomer).isEqualToComparingOnlyGivenFields(customer, "email", "password");
-        assertThat(savedCustomer.getAddress().getAddress()).isEqualTo(customer.getAddress().getAddress());
-        assertThat(savedCustomer.getCreatedDatetime()).isEqualTo(customer.getCreatedDatetime());
-        assertThat(savedCustomer.getModifiedDatetime()).isEqualTo(customer.getModifiedDatetime());
+        assertThat(savedCustomer).isEqualToComparingOnlyGivenFields(customerDto, "email", "password");
+        assertThat(savedCustomer.getAddress().getAddress()).isEqualTo(customerDto.getAddress().getAddress());
+        assertThat(savedCustomer.getCreatedDatetime()).isNotNull();
+        assertThat(savedCustomer.getModifiedDatetime()).isNotNull();
     }
 
     @Test
