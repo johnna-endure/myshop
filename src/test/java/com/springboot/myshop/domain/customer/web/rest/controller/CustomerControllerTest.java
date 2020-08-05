@@ -7,10 +7,9 @@ import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpd
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
 import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
-import com.springboot.myshop.domain.customer.entity.value.Address;
+import com.springboot.myshop.domain.value.Address;
 import com.springboot.myshop.domain.customer.web.rest.controller.assembler.CustomerModelAssembler;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class CustomerControllerTest {
 
+	private Address defaultAddress = new Address("city", "street", "zipcode");
+	private Address newAddress = new Address("city2", "street2", "zipcode2");
+
 	@Autowired
 	private CustomerRepository customerRepository;
 
@@ -47,7 +49,7 @@ public class CustomerControllerTest {
 	public void all_파라미터_없고_사이즈보다_데이터_적은_경우() throws Exception {
 		//given
 		IntStream.range(0,3).boxed()
-				.map(i -> new Customer("email"+i, "1234", new Address("address")))
+				.map(i -> new Customer("email"+i, "password", defaultAddress))
 				.forEach(customer -> customerRepository.save(customer));
 		//when
 		String content = mockMvc.perform(get("/customers").contentType(MediaType.APPLICATION_JSON))
@@ -67,7 +69,7 @@ public class CustomerControllerTest {
 	public void all_페이징_page만_전달한_경우() throws Exception {
 		//given
 		IntStream.range(0,7).boxed()
-				.map(i -> new Customer("email"+i, "1234", new Address("address")))
+				.map(i -> new Customer("email"+i, "password", defaultAddress))
 				.forEach(customer -> customerRepository.save(customer));
 		//when1 : 첫번째 페이지 요청
 		String firstPageContent = mockMvc.perform(
@@ -102,7 +104,7 @@ public class CustomerControllerTest {
 	public void all_페이징_page와_size_전달한_경우() throws Exception {
 		//given
 		IntStream.range(0,7).boxed()
-				.map(i -> new Customer("email"+i, "1234", new Address("address")))
+				.map(i -> new Customer("email"+i, "password", defaultAddress))
 				.forEach(customer -> customerRepository.save(customer));
 		//when1 : 첫번째 페이지 요청
 		String firstPageContent = mockMvc.perform(
@@ -140,8 +142,8 @@ public class CustomerControllerTest {
 		//given
 		Customer customer = Customer.builder()
 				.email("email")
-				.password("1234")
-				.address(new Address("address")).build();
+				.password("password")
+				.address(defaultAddress).build();
 		Customer savedCustomer = customerRepository.save(customer);
 
 		//when
@@ -175,7 +177,7 @@ public class CustomerControllerTest {
 		CustomerCreateDto creationDto = CustomerCreateDto.builder()
 				.email("email")
 				.password("password")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 
 
@@ -188,7 +190,9 @@ public class CustomerControllerTest {
 
 		assertThat(findJsonElement(content, "$.id")).isNotNull();
 		assertThat(findJsonElement(content, "$.email")).isEqualTo("email");
-		assertThat(findJsonElement(content, "$.address.address")).isEqualTo("address");
+		assertThat(findJsonElement(content, "$.address.city")).isEqualTo(defaultAddress.getCity());
+		assertThat(findJsonElement(content, "$.address.street")).isEqualTo(defaultAddress.getStreet());
+		assertThat(findJsonElement(content, "$.address.zipcode")).isEqualTo(defaultAddress.getZipcode());
 		assertThat(findJsonElement(content, "$.createdDatetime")).isNotNull();
 		assertThat(findJsonElement(content, "$.modifiedDatetime")).isNotNull();
 	}
@@ -198,7 +202,7 @@ public class CustomerControllerTest {
 		CustomerCreateDto creationDto = CustomerCreateDto.builder()
 				.email(null)
 				.password("password")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 
 		String content = mockMvc.perform(
@@ -217,7 +221,7 @@ public class CustomerControllerTest {
 		CustomerCreateDto creationDto = CustomerCreateDto.builder()
 				.email("email")
 				.password(null)
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 
 		String content = mockMvc.perform(
@@ -236,7 +240,7 @@ public class CustomerControllerTest {
 		CustomerCreateDto creationDto = CustomerCreateDto.builder()
 				.email("email")
 				.password("1234")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 
 		String content = mockMvc.perform(
@@ -273,8 +277,8 @@ public class CustomerControllerTest {
 	public void update_변경에_성공한_경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
-				new Customer("email", "password", new Address("address")));
-		CustomerUpdateDto updateDto = new CustomerUpdateDto("password2", new Address("address2"));
+				new Customer("email", "password", defaultAddress));
+		CustomerUpdateDto updateDto = new CustomerUpdateDto("password2", newAddress);
 
 		//when
 		mockMvc.perform(
@@ -286,16 +290,16 @@ public class CustomerControllerTest {
 		//then
 		Customer modified = customerRepository.findById(saved.getId()).get();
 		assertThat(modified.getPassword()).isEqualTo("password2");
-		assertThat(modified.getAddress().getAddress()).isEqualTo("address2");
+		assertThat(modified.getAddress()).isEqualToComparingFieldByField(newAddress);
 	}
 
 	@Test
 	public void update_updateDto_password_null인경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
-				new Customer("email", "password", new Address("address")));
+				new Customer("email", "password", defaultAddress));
 		CustomerUpdateDto updateDto = CustomerUpdateDto.builder()
-				.address(new Address("address2"))
+				.address(newAddress)
 				.password(null)
 				.build();
 
@@ -318,9 +322,9 @@ public class CustomerControllerTest {
 	public void update_updateDto_password_8자미만인경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
-				new Customer("email", "password", new Address("address")));
+				new Customer("email", "password", defaultAddress));
 		CustomerUpdateDto updateDto = CustomerUpdateDto.builder()
-				.address(new Address("address2"))
+				.address(newAddress)
 				.password("1234")
 				.build();
 
@@ -344,7 +348,7 @@ public class CustomerControllerTest {
 	public void update_updateDto_address_null인경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
-				new Customer("email", "password", new Address("address")));
+				new Customer("email", "password", defaultAddress));
 		CustomerUpdateDto updateDto = CustomerUpdateDto.builder()
 				.address(null)
 				.password("password2")
@@ -369,7 +373,7 @@ public class CustomerControllerTest {
 	public void delete_삭제_성공한_경우() throws Exception {
 		//given
 		Customer saved = customerRepository.save(
-				new Customer("email", "1234", new Address("address")));
+				new Customer("email", "1234", defaultAddress));
 
 		String content = mockMvc.perform(
 				delete("/customers/"+saved.getId())

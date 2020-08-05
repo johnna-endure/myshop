@@ -2,7 +2,7 @@ package com.springboot.myshop.domain.customer.web.rest.controller;
 
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.response.DeleteCustomerResponse;
-import com.springboot.myshop.domain.customer.web.rest.controller.response.FoundCustomerResponse;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.FoundCustomerDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.enums.DeleteResults;
 import com.springboot.myshop.domain.customer.web.rest.controller.assembler.CustomerModelAssembler;
@@ -30,13 +30,13 @@ public class CustomerController {
     private final CustomerModelAssembler assembler;
 
     @GetMapping
-    public CollectionModel<EntityModel<FoundCustomerResponse>> all(@RequestParam(required = false) Integer page,
-                                                                   @RequestParam(required = false) Integer size) {
+    public CollectionModel<EntityModel<FoundCustomerDto>> all(@RequestParam(required = false) Integer page,
+                                                              @RequestParam(required = false) Integer size) {
         page = Objects.isNull(page) ? 0 : page;
         size = Objects.isNull(size) ? 5 : size;
 
-        List<EntityModel<FoundCustomerResponse>> customers = customerService.findAll(page, size).stream()
-                .map(customer -> FoundCustomerResponse.of(customer))
+        List<EntityModel<FoundCustomerDto>> customers = customerService.findAll(page, size).stream()
+                .map(customer -> FoundCustomerDto.of(customer))
                 .map(responseDto -> assembler.toModel(responseDto))
                 .collect(Collectors.toList());
         return CollectionModel.of(customers,
@@ -45,14 +45,14 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public EntityModel<FoundCustomerResponse> one(@PathVariable Long id) {
-        return assembler.toModel(FoundCustomerResponse.of(customerService.findOne(id)));
+    public EntityModel<FoundCustomerDto> one(@PathVariable Long id) {
+        return assembler.toModel(FoundCustomerDto.of(customerService.findOne(id)));
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<FoundCustomerResponse>> create(@RequestBody CustomerCreateDto customerCreateDto){
-        FoundCustomerResponse responseDto =
-                FoundCustomerResponse.of(customerService.create(customerCreateDto));
+    public ResponseEntity<EntityModel<FoundCustomerDto>> create(@RequestBody CustomerCreateDto customerCreateDto){
+        FoundCustomerDto responseDto =
+                FoundCustomerDto.of(customerService.create(customerCreateDto));
 
         return ResponseEntity
                 .created(linkTo(methodOn(CustomerController.class).one(responseDto.getId())).toUri())
@@ -63,10 +63,10 @@ public class CustomerController {
     Customer 엔티티의 수정은 password, Address만 가능하다.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<FoundCustomerResponse>> update(
+    public ResponseEntity<EntityModel<FoundCustomerDto>> update(
             @RequestBody CustomerUpdateDto customerUpdateDto, @PathVariable Long id) {
-        FoundCustomerResponse responseDto =
-                FoundCustomerResponse.of(customerService.update(customerUpdateDto, id));
+        FoundCustomerDto responseDto =
+                FoundCustomerDto.of(customerService.update(customerUpdateDto, id));
 
         return ResponseEntity
                 .created(linkTo(methodOn(CustomerController.class).one(id)).toUri())

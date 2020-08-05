@@ -3,7 +3,7 @@ package com.springboot.myshop.domain.customer.web.service;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.exception.NotFoundCustomerException;
-import com.springboot.myshop.domain.customer.entity.value.Address;
+import com.springboot.myshop.domain.value.Address;
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +24,10 @@ import static org.mockito.Mockito.mock;
 @SpringBootTest
 public class CustomerServiceTest {
 
+    private Address defaultAddress = new Address("city", "street", "zipcode");
+    private Address newAddress = new Address("city2", "street2", "zipcode2");
     private CustomerService customerService;
+
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -42,7 +45,7 @@ public class CustomerServiceTest {
     public void findAll_페이징테스트() {
         //given
         IntStream.range(0,5).boxed()
-                .map(i -> new Customer("email"+i,"1234", new Address("address")))
+                .map(i -> new Customer("email"+i,"password", defaultAddress))
                 .forEach(c -> customerRepository.save(c));
 
         Page<Customer> firstPage = customerService.findAll(0,3);
@@ -55,7 +58,7 @@ public class CustomerServiceTest {
     @Test
     public void findOne_성공한_경우(){
         //given
-        Customer customer = new Customer("email", "1234", new Address("address"));
+        Customer customer = new Customer("email", "password",defaultAddress);
         Customer savedCustomer = customerRepository.save(customer);
 
         //when
@@ -64,8 +67,8 @@ public class CustomerServiceTest {
         //then
         assertThat(foundCustomer.getId()).isEqualTo(savedCustomer.getId());
         assertThat(foundCustomer.getEmail()).isEqualTo("email");
-        assertThat(foundCustomer.getPassword()).isEqualTo("1234");
-        assertThat(foundCustomer.getAddress().getAddress()).isEqualTo("address");
+        assertThat(foundCustomer.getPassword()).isEqualTo("password");
+        assertThat(foundCustomer.getAddress()).isEqualToComparingFieldByField(defaultAddress);
     }
 
     @Test
@@ -78,14 +81,15 @@ public class CustomerServiceTest {
     @Test
     public void create_가입에_성공한_경우(){
         //given
-        CustomerCreateDto customerDto = new CustomerCreateDto("email", "1234", new Address("address"));
+        CustomerCreateDto customerDto =
+                new CustomerCreateDto("email", "password", defaultAddress);
 
         //when
         Customer savedCustomer = customerService.create(customerDto);
 
         //then
         assertThat(savedCustomer).isEqualToComparingOnlyGivenFields(customerDto, "email", "password");
-        assertThat(savedCustomer.getAddress().getAddress()).isEqualTo(customerDto.getAddress().getAddress());
+        assertThat(savedCustomer.getAddress()).isEqualToComparingFieldByField(defaultAddress);
         assertThat(savedCustomer.getCreatedDatetime()).isNotNull();
         assertThat(savedCustomer.getModifiedDatetime()).isNotNull();
     }
@@ -93,21 +97,22 @@ public class CustomerServiceTest {
     @Test
     public void update_성공한_경우() {
         //given
-        Customer customer = new Customer("email", "1234", new Address("address"));
+        Customer customer = new Customer("email", "password", defaultAddress);
         Long existId = customerRepository.save(customer).getId();
 
         //when
-        CustomerUpdateDto updateDto = new CustomerUpdateDto("modified", new Address("modified"));
+
+        CustomerUpdateDto updateDto = new CustomerUpdateDto("password2", newAddress);
         Customer modifiedCustomer = customerService.update(updateDto, existId);
 
-        assertThat(modifiedCustomer.getPassword()).isEqualTo("modified");
-        assertThat(modifiedCustomer.getAddress().getAddress()).isEqualTo("modified");
+        assertThat(modifiedCustomer.getPassword()).isEqualTo("password2");
+        assertThat(modifiedCustomer.getAddress()).isEqualToComparingFieldByField(newAddress);
     }
 
     @Test
     public void update_id에_해당하는_고객_없는_경우_던지는_예외() {
         //given
-        CustomerUpdateDto updateDto = new CustomerUpdateDto("modified", new Address("modified"));
+        CustomerUpdateDto updateDto = new CustomerUpdateDto("modified", newAddress);
 
         //when and then
         assertThatThrownBy(() -> customerService.update(updateDto, 1l))
@@ -117,7 +122,7 @@ public class CustomerServiceTest {
     @Test
     public void delete_삭제_성공한_경우() {
         //given
-        Customer customer = new Customer("email", "1234", new Address("address"));
+        Customer customer = new Customer("email", "1234", defaultAddress);
         Customer savedCustomer = customerRepository.save(customer);
 
         //when

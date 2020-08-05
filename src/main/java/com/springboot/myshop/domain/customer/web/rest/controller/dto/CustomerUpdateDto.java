@@ -1,10 +1,9 @@
 package com.springboot.myshop.domain.customer.web.rest.controller.dto;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.entity.value.Address;
+import com.springboot.myshop.domain.value.Address;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;

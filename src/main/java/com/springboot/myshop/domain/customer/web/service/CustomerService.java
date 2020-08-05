@@ -47,7 +47,7 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundCustomerException(id));
         customer.update(customerDto.getPassword(),customerDto.getAddress());
-        return customerRepository.save(customer);
+        return customer;
     }
 
     public void delete(Long id){

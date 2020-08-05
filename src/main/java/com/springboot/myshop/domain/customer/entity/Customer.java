@@ -1,6 +1,6 @@
 package com.springboot.myshop.domain.customer.entity;
 
-import com.springboot.myshop.domain.customer.entity.value.Address;
+import com.springboot.myshop.domain.value.Address;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @Entity
 public class Customer {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue
     @Column(name = "CUSTOMER_ID")
     private Long id;
 

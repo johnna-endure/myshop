@@ -2,7 +2,7 @@ package com.springboot.myshop.domain.customer.aspect;
 
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
-import com.springboot.myshop.domain.customer.entity.value.Address;
+import com.springboot.myshop.domain.value.Address;
 import com.springboot.myshop.domain.customer.exception.CustomerValidationException;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
@@ -19,6 +19,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 public class CustomerValidationAspectTest {
 
+	private Address defaultAddress = new Address("city", "street", "zipcode");
+	private Address newAddress = new Address("city2", "street2", "zipcode2");
+
 	@Autowired
 	private CustomerService customerService;
 
@@ -29,19 +32,21 @@ public class CustomerValidationAspectTest {
 	public void validateBeforeCreate_검증통과시() {
 		CustomerCreateDto customerCreateDto = CustomerCreateDto.builder()
 				.email("email")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.password("password")
 				.build();
 
-		assertThat(customerService.create(customerCreateDto))
-				.isEqualToComparingOnlyGivenFields(customerCreateDto,"email", "address","password");
+		Customer created = customerService.create(customerCreateDto);
+		assertThat(created).isEqualToComparingOnlyGivenFields(customerCreateDto,
+						"email","password");
+		assertThat(created.getAddress()).isEqualToComparingFieldByField(defaultAddress);
 	}
 
 	@Test
 	public void validateBeforeCreate_이메일_null() {
 		CustomerCreateDto customerCreateDto = CustomerCreateDto.builder()
 				.email(null)
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.password("password")
 				.build();
 
@@ -54,7 +59,7 @@ public class CustomerValidationAspectTest {
 	public void validateBeforeCreate_비밀번호_null() {
 		CustomerCreateDto customerCreateDto = CustomerCreateDto.builder()
 				.email("email")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.password(null)
 				.build();
 
@@ -81,17 +86,17 @@ public class CustomerValidationAspectTest {
 		Customer customer = Customer.builder()
 				.email("email")
 				.password("password")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 		Customer savedCustomer =repository.save(customer);
 
 		CustomerUpdateDto customerUpdateDto = CustomerUpdateDto.builder()
-				.address(new Address("address1"))
+				.address(newAddress)
 				.password("password2")
 				.build();
 
 		Customer modifiedCustomer = customerService.update(customerUpdateDto, savedCustomer.getId());
-		assertThat(modifiedCustomer.getAddress().getAddress()).isEqualTo(customerUpdateDto.getAddress().getAddress());
+		assertThat(modifiedCustomer.getAddress()).isEqualToComparingFieldByField(newAddress);
 		assertThat(modifiedCustomer.getPassword()).isEqualTo(customerUpdateDto.getPassword());
 	}
 
@@ -100,12 +105,12 @@ public class CustomerValidationAspectTest {
 		Customer customer = Customer.builder()
 				.email("email")
 				.password("password")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 		Customer savedCustomer =repository.save(customer);
 
 		CustomerUpdateDto customerUpdateDto = CustomerUpdateDto.builder()
-				.address(new Address("address1"))
+				.address(newAddress)
 				.password(null)
 				.build();
 
@@ -119,12 +124,12 @@ public class CustomerValidationAspectTest {
 		Customer customer = Customer.builder()
 				.email("email")
 				.password("password")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 		Customer savedCustomer =repository.save(customer);
 
 		CustomerUpdateDto customerUpdateDto = CustomerUpdateDto.builder()
-				.address(new Address("address1"))
+				.address(newAddress)
 				.password("1234")
 				.build();
 
@@ -138,7 +143,7 @@ public class CustomerValidationAspectTest {
 		Customer customer = Customer.builder()
 				.email("email")
 				.password("password")
-				.address(new Address("address"))
+				.address(defaultAddress)
 				.build();
 		Customer savedCustomer =repository.save(customer);
 
