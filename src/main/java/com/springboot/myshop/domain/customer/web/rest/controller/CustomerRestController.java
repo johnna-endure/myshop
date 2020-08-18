@@ -1,10 +1,10 @@
 package com.springboot.myshop.domain.customer.web.rest.controller;
 
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
-import com.springboot.myshop.domain.customer.web.rest.controller.response.DeleteCustomerResponse;
-import com.springboot.myshop.domain.customer.web.rest.controller.dto.FoundCustomerDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.response.DeleteCustomerResponse;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.response.FoundCustomerDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
-import com.springboot.myshop.domain.customer.web.rest.controller.dto.enums.DeleteResults;
+import com.springboot.myshop.common.enums.DeleteResult;
 import com.springboot.myshop.domain.customer.web.rest.controller.assembler.CustomerModelAssembler;
 import com.springboot.myshop.domain.customer.web.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/customers", produces = "application/json")
-public class CustomerController {
+public class CustomerRestController {
 
     private final CustomerService customerService;
     private final CustomerModelAssembler assembler;
@@ -40,8 +40,8 @@ public class CustomerController {
                 .map(responseDto -> assembler.toModel(responseDto))
                 .collect(Collectors.toList());
         return CollectionModel.of(customers,
-                linkTo(methodOn(CustomerController.class).all(page, size)).withSelfRel(),
-                linkTo(methodOn(CustomerController.class).create(null)).withRel("create"));
+                linkTo(methodOn(CustomerRestController.class).all(page, size)).withSelfRel(),
+                linkTo(methodOn(CustomerRestController.class).create(null)).withRel("create"));
     }
 
     @GetMapping("/{id}")
@@ -55,7 +55,7 @@ public class CustomerController {
                 FoundCustomerDto.of(customerService.create(customerCreateDto));
 
         return ResponseEntity
-                .created(linkTo(methodOn(CustomerController.class).one(responseDto.getId())).toUri())
+                .created(linkTo(methodOn(CustomerRestController.class).one(responseDto.getId())).toUri())
                 .body(assembler.toModel(responseDto));
     }
 
@@ -69,7 +69,7 @@ public class CustomerController {
                 FoundCustomerDto.of(customerService.update(customerUpdateDto, id));
 
         return ResponseEntity
-                .created(linkTo(methodOn(CustomerController.class).one(id)).toUri())
+                .created(linkTo(methodOn(CustomerRestController.class).one(id)).toUri())
                 .body(assembler.toModel(responseDto));
     }
 
@@ -77,9 +77,9 @@ public class CustomerController {
     public ResponseEntity<EntityModel<DeleteCustomerResponse>> deleteOne(@PathVariable Long id) {
         customerService.delete(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(EntityModel.of(new DeleteCustomerResponse(DeleteResults.SUCCESS),
-                        linkTo(methodOn(CustomerController.class).all(null, null)).withRel("all"),
-                        linkTo(methodOn(CustomerController.class).deleteOne(id)).withSelfRel()));
+                .body(EntityModel.of(new DeleteCustomerResponse(DeleteResult.SUCCESS),
+                        linkTo(methodOn(CustomerRestController.class).all(null, null)).withRel("all"),
+                        linkTo(methodOn(CustomerRestController.class).deleteOne(id)).withSelfRel()));
     }
 
 }

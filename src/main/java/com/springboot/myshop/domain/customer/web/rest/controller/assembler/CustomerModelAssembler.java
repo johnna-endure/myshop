@@ -1,7 +1,7 @@
 package com.springboot.myshop.domain.customer.web.rest.controller.assembler;
 
-import com.springboot.myshop.domain.customer.web.rest.controller.dto.FoundCustomerDto;
-import com.springboot.myshop.domain.customer.web.rest.controller.CustomerController;
+import com.springboot.myshop.domain.customer.web.rest.controller.dto.response.FoundCustomerDto;
+import com.springboot.myshop.domain.customer.web.rest.controller.CustomerRestController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -17,10 +17,10 @@ public class CustomerModelAssembler
 	public EntityModel<FoundCustomerDto> toModel(FoundCustomerDto entity) {
 		
 		return EntityModel.of(entity,
-				linkTo(methodOn(CustomerController.class).all(null,null)).withRel("all"),
-				linkTo(methodOn(CustomerController.class).one(entity.getId())).withSelfRel(),
-				linkTo(methodOn(CustomerController.class).update(null, entity.getId())).withRel("update"),
-				linkTo(methodOn(CustomerController.class).deleteOne(entity.getId())).withRel("delete")
+				linkTo(methodOn(CustomerRestController.class).all(null,null)).withRel("all"),
+				linkTo(methodOn(CustomerRestController.class).one(entity.getId())).withSelfRel(),
+				linkTo(methodOn(CustomerRestController.class).update(null, entity.getId())).withRel("update"),
+				linkTo(methodOn(CustomerRestController.class).deleteOne(entity.getId())).withRel("delete")
 		);
 	}
 }

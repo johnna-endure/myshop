@@ -1,20 +1,17 @@
 package com.springboot.myshop.domain.order.subdomain.item.entity;
 
 import com.springboot.myshop.domain.order.subdomain.item.web.controller.dto.ItemDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Getter
+@Getter @ToString
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE")
-public abstract class Item {
+public class Item {
 
 	@Id @GeneratedValue
 	@Column(name = "ITEM_ID")
@@ -32,11 +29,40 @@ public abstract class Item {
 	@Column(nullable = false)
 	private Integer stockQuantity;
 
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<ItemDetail> details = new ArrayList<>();
+
+	@Builder
 	public Item(String name, Integer price, Integer stockQuantity) {
 		this.name = name;
 		this.price = price;
 		this.stockQuantity = stockQuantity;
 	}
 
-	public abstract Item update(ItemDto itemDto);
+	public Item update(ItemDto itemDto){
+		this.name = itemDto.getName();
+		this.price = itemDto.getPrice();
+		this.stockQuantity = itemDto.getStockQuantity();
+
+		if(itemDto.getDetails() == null){
+			this.details = null;
+			return this;
+		}
+ 		this.details = itemDto.getDetails().stream()
+				.map(d -> d.toItemDetailEntity())
+				.collect(Collectors.toList());
+		return this;
+	}
+	/*
+	연관관계 설정
+	 */
+	public void setDetails(List<ItemDetail> details) {
+		this.details = details;
+		details.stream().forEach(detail -> detail.setItem(this));
+	}
+
+	public void addDetail(ItemDetail detail) {
+		this.details.add(detail);
+		detail.setItem(this);
+	}
 }

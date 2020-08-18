@@ -1,7 +1,6 @@
-package com.springboot.myshop.domain.customer.web.rest.controller.response;
+package com.springboot.myshop.common.error.response;
 
-import com.springboot.myshop.domain.customer.exception.CustomerValidationException;
-import lombok.Builder;
+import com.springboot.myshop.common.exception.ValidationException;
 import lombok.Getter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,7 @@ public class ValidationErrorResponse extends ErrorResponse{
 	}
 
 	public static ValidationErrorResponse makeErrorResponse(HttpServletRequest request,
-	                                                        CustomerValidationException e) {
+	                                                        ValidationException e) {
 		return new ValidationErrorResponse(
 				request.getRequestURI(), request.getMethod(), e.getMessage(), e.getViolations());
 	}

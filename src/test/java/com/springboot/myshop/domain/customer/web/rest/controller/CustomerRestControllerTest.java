@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CustomerControllerTest {
+public class CustomerRestControllerTest {
 
 	private Address defaultAddress = new Address("city", "street", "zipcode");
 	private Address newAddress = new Address("city2", "street2", "zipcode2");

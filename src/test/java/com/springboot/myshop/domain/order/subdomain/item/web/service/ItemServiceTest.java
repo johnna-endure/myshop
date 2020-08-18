@@ -1,17 +1,18 @@
 package com.springboot.myshop.domain.order.subdomain.item.web.service;
 
-import com.springboot.myshop.domain.order.subdomain.item.entity.Book;
 import com.springboot.myshop.domain.order.subdomain.item.entity.Item;
+import com.springboot.myshop.domain.order.subdomain.item.entity.ItemDetail;
+import com.springboot.myshop.domain.order.subdomain.item.entity.repository.ItemDetailRepository;
 import com.springboot.myshop.domain.order.subdomain.item.entity.repository.ItemRepository;
-import com.springboot.myshop.domain.order.subdomain.item.web.controller.dto.BookDto;
 import com.springboot.myshop.domain.order.subdomain.item.web.controller.dto.ItemDto;
-import org.aspectj.lang.annotation.Before;
-import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.BeforeEach;
+import com.springboot.myshop.domain.order.subdomain.item.web.controller.dto.ItemDetailDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,69 +25,134 @@ public class ItemServiceTest {
 
 	@Autowired
 	private ItemRepository itemRepository;
-	private BookDto defaultBookDto;
 
-	@BeforeEach
-	public void beforeEach() {
-		defaultBookDto = BookDto.builder()
-				.author("author")
-				.isbn("isbn")
+	@Autowired
+	private ItemDetailRepository itemDetailRepository;
+
+	@Test
+	public void create_성공한_경우() {
+		List<ItemDetailDto> details = new ArrayList<>();
+		details.add(new ItemDetailDto("tag","content"));
+		ItemDto createDto = ItemDto.builder()
 				.name("name")
 				.price(1000)
-				.stockQuantity(1000).build();
+				.stockQuantity(1000)
+				.details(details).build();
+
+		Item savedItem  = itemService.create(createDto);
+		assertThat(savedItem.getName()).isEqualTo("name");
+		assertThat(savedItem.getPrice()).isEqualTo(1000);
+		assertThat(savedItem.getStockQuantity()).isEqualTo(1000);
+
+		ItemDetail savedDetail = savedItem.getDetails().get(0);
+		assertThat(savedDetail.getTag()).isEqualTo("tag");
+		assertThat(savedDetail.getContent()).isEqualTo("content");
 	}
 
 	@Test
-	public void create_book_반환타입_테스트() {
-		Item savedItem = itemService.create(defaultBookDto);
-		assertThat(savedItem instanceof Book).isEqualTo(true);
+	public void findById_성공한_경우() {
+		//given
+		Item item = Item.builder()
+				.name("name")
+				.price(1000)
+				.stockQuantity(1000)
+				.build();
+		List<ItemDetail> details = new ArrayList<>();
+		details.add(new ItemDetail("tag","content"));
+		item.setDetails(details);
+		Item savedItem = itemRepository.save(item);
+
+		//when
+		Item foundItem = itemService.findOne(savedItem.getId());
+
+		//then
+		assertThat(foundItem.getName()).isEqualTo("name");
+		assertThat(foundItem.getPrice()).isEqualTo(1000);
+		assertThat(foundItem.getStockQuantity()).isEqualTo(1000);
+
+		ItemDetail foundDetail = foundItem.getDetails().get(0);
+		assertThat(foundDetail.getTag()).isEqualTo("tag");
+		assertThat(foundDetail.getContent()).isEqualTo("content");
 	}
 
 	@Test
-	public void create_book_생성_성공한_경우(){
-		Item savedItem = itemService.create(defaultBookDto);
-		Book book = (Book) itemRepository.findById(savedItem.getId()).get();
+	public void update_성공한_경우_detailIsNull(){
+		//given
+		Item item = Item.builder()
+				.name("name")
+				.price(1000)
+				.stockQuantity(1000)
+				.build();
+		List<ItemDetail> details = new ArrayList<>();
+		details.add(new ItemDetail("tag","content"));
+		item.setDetails(details);
+		Item savedItem = itemRepository.save(item);
 
-		assertThat(book.getName()).isEqualTo("name");
-		assertThat(book.getPrice()).isEqualTo(1000);
-		assertThat(book.getStockQuantity()).isEqualTo(1000);
-		assertThat(book.getAuthor()).isEqualTo("author");
-		assertThat(book.getIsbn()).isEqualTo("isbn");
+		ItemDto saveDto = ItemDto.builder()
+				.name("name1")
+				.price(2000)
+				.stockQuantity(2000)
+				.details(null).build();
+		//when
+		Item updated = itemService.update(savedItem.getId(), saveDto);
+		//then
+		assertThat(updated.getDetails()).isNullOrEmpty();
+		assertThat(updated.getName()).isEqualTo("name1");
+		assertThat(updated.getPrice()).isEqualTo(2000);
+		assertThat(updated.getStockQuantity()).isEqualTo(2000);
 	}
 
 	@Test
-	public void findById_book_찾기_성공한_경우() {
-		Item savedItem = itemRepository.save(defaultBookDto.toEntity());
-		Book book = itemService.findById(savedItem.getId(), Book.class);
+	public void update_성공한_경우_detailIsNotNull(){
+		//given
+		Item item = Item.builder()
+				.name("name")
+				.price(1000)
+				.stockQuantity(1000)
+				.build();
+		List<ItemDetail> details = new ArrayList<>();
+		details.add(new ItemDetail("tag","content"));
+		item.setDetails(details);
+		Item savedItem = itemRepository.save(item);
 
-		assertThat(book.getName()).isEqualTo("name");
-		assertThat(book.getPrice()).isEqualTo(1000);
-		assertThat(book.getStockQuantity()).isEqualTo(1000);
-		assertThat(book.getAuthor()).isEqualTo("author");
-		assertThat(book.getIsbn()).isEqualTo("isbn");
+		List<ItemDetailDto> newDetail = new ArrayList<>();
+		newDetail.add(new ItemDetailDto("tag1","content1"));
+		newDetail.add(new ItemDetailDto("tag2","content2"));
+		ItemDto saveDto = ItemDto.builder()
+				.name("name1")
+				.price(2000)
+				.stockQuantity(2000)
+				.details(newDetail).build();
+		//when
+		Item updated = itemService.update(savedItem.getId(), saveDto);
+		//then
+		assertThat(updated.getDetails().size()).isEqualTo(2);
+		assertThat(updated.getName()).isEqualTo("name1");
+		assertThat(updated.getPrice()).isEqualTo(2000);
+		assertThat(updated.getStockQuantity()).isEqualTo(2000);
 	}
 
 	@Test
-	public void update_book_수정_성공한_경우(){
-		Item savedItem = itemRepository.save(defaultBookDto.toEntity());
-		BookDto priceUpdateDto = BookDto.builder()
-				.author(defaultBookDto.getAuthor())
-				.isbn(defaultBookDto.getIsbn())
-				.name(defaultBookDto.getName())
-				.price(5000)
-				.stockQuantity(defaultBookDto.getStockQuantity()).build();
-		Book updatedBook = itemService.update(savedItem.getId(),priceUpdateDto, Book.class);
+	public void delete_성공() {
+		//given
+		Item item = Item.builder()
+				.name("name")
+				.price(1000)
+				.stockQuantity(1000)
+				.build();
+		List<ItemDetail> details = new ArrayList<>();
+		details.add(new ItemDetail("tag","content"));
+		item.setDetails(details);
+		Item savedItem = itemRepository.save(item);
+		//사전 조건 체크
+		assertThat(itemRepository.existsById(savedItem.getId())).isTrue();
+		assertThat(itemDetailRepository.findAll().size()).isEqualTo(1);
 
-		assertThat(updatedBook).isEqualToIgnoringGivenFields(defaultBookDto,"id","price");
-		assertThat(updatedBook.getPrice()).isEqualTo(5000);
-	}
-
-	@Test
-	public void delete_성공한_경우() {
-		Item savedItem = itemRepository.save(defaultBookDto.toEntity());
-
+		//when
 		itemService.delete(savedItem.getId());
-		assertThat(itemRepository.existsById(savedItem.getId())).isFalse();
-	}
 
+		//then
+		assertThat(itemRepository.existsById(savedItem.getId())).isFalse();
+		assertThat(itemDetailRepository.findAll().size()).isEqualTo(0);
+	}
 }

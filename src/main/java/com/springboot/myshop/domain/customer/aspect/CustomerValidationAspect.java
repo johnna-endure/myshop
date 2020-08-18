@@ -1,12 +1,9 @@
 package com.springboot.myshop.domain.customer.aspect;
 
-import com.springboot.myshop.domain.customer.entity.Customer;
-import com.springboot.myshop.domain.customer.exception.CustomerValidationException;
+import com.springboot.myshop.common.exception.ValidationException;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -49,9 +46,6 @@ public class CustomerValidationAspect {
 		constraintViolations.stream()
 				.forEach(constraint ->
 						violations.put(constraint.getPropertyPath().toString(), constraint.getMessage()));
-		throw new CustomerValidationException(violations, "bad request");
+		throw new ValidationException(violations, "bad request");
 	}
-
-
-
 }

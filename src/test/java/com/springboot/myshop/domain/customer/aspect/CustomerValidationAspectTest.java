@@ -3,7 +3,7 @@ package com.springboot.myshop.domain.customer.aspect;
 import com.springboot.myshop.domain.customer.entity.Customer;
 import com.springboot.myshop.domain.customer.entity.repository.CustomerRepository;
 import com.springboot.myshop.domain.value.Address;
-import com.springboot.myshop.domain.customer.exception.CustomerValidationException;
+import com.springboot.myshop.common.exception.ValidationException;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerCreateDto;
 import com.springboot.myshop.domain.customer.web.rest.controller.dto.CustomerUpdateDto;
 import com.springboot.myshop.domain.customer.web.service.CustomerService;
@@ -51,7 +51,7 @@ public class CustomerValidationAspectTest {
 				.build();
 
 		assertThatThrownBy(() -> customerService.create(customerCreateDto))
-				.isExactlyInstanceOf(CustomerValidationException.class)
+				.isExactlyInstanceOf(ValidationException.class)
 				.hasMessage("bad request");
 	}
 
@@ -64,7 +64,7 @@ public class CustomerValidationAspectTest {
 				.build();
 
 		assertThatThrownBy(() -> customerService.create(customerCreateDto))
-				.isExactlyInstanceOf(CustomerValidationException.class)
+				.isExactlyInstanceOf(ValidationException.class)
 				.hasMessage("bad request");
 	}
 
@@ -77,7 +77,7 @@ public class CustomerValidationAspectTest {
 				.build();
 
 		assertThatThrownBy(() -> customerService.create(customerCreateDto))
-				.isExactlyInstanceOf(CustomerValidationException.class)
+				.isExactlyInstanceOf(ValidationException.class)
 				.hasMessage("bad request");
 	}
 
@@ -115,7 +115,7 @@ public class CustomerValidationAspectTest {
 				.build();
 
 		assertThatThrownBy(() -> customerService.update(customerUpdateDto, savedCustomer.getId()))
-				.isExactlyInstanceOf(CustomerValidationException.class)
+				.isExactlyInstanceOf(ValidationException.class)
 				.hasMessage("bad request");
 	}
 
@@ -134,7 +134,7 @@ public class CustomerValidationAspectTest {
 				.build();
 
 		assertThatThrownBy(() -> customerService.update(customerUpdateDto, savedCustomer.getId()))
-				.isExactlyInstanceOf(CustomerValidationException.class)
+				.isExactlyInstanceOf(ValidationException.class)
 				.hasMessage("bad request");
 	}
 
@@ -153,7 +153,7 @@ public class CustomerValidationAspectTest {
 				.build();
 
 		assertThatThrownBy(() -> customerService.update(customerUpdateDto, savedCustomer.getId()))
-				.isExactlyInstanceOf(CustomerValidationException.class)
+				.isExactlyInstanceOf(ValidationException.class)
 				.hasMessage("bad request");
 	}
 }
